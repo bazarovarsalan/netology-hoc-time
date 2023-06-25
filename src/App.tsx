@@ -12,38 +12,45 @@ type Props = {
   list: list[]
 }
 
-function DateTimePretty(props:{date:string}) {
-  const now = moment().format('YYYY-MM-DD HH:mm:ss')
-  const date1 = moment(props.date);
-  console.log(props.date, date1)
-  const date2 = moment(now);
-
-  const getDiff = (a:any,b:any): string => {
-    let res:string = '';
-      if (+(b.diff(a, 'years')) >= 1) {
-        res = b.diff(a, 'years')
-        return `${res} years ago`
-      } else if(+(b.diff(a, 'months')) >= 1){
-        res = b.diff(a, 'months')
-        return `${res} months ago`
-      } else if(+(b.diff(a, 'days')) >= 1){
-        res = b.diff(a, 'days')
-        return `${res} days ago`
-      } else if(+(b.diff(a, 'hours')) >= 1){
-        res = b.diff(a, 'hours')
-        return `${res} hours ago`
-      } else if(+(b.diff(a, 'minutes')) >= 1){
-        res = b.diff(a, 'minutes')
-        return `${res} minutes ago`
-      }
-      return 'now'
-  }
-  let diff = getDiff(date1, date2)
-  console.log(diff)
-
-  return <DateTime date={diff} /> 
+type DateTimeProps = {
+  date: string
 }
 
+
+function DateTimePrettyFoo<T extends DateTimeProps > (Component:React.ComponentType<T>) {
+  return function (props: T) {
+        const now = moment().format('YYYY-MM-DD HH:mm:ss')
+        const date1 = moment(props.date);
+        const date2 = moment(now);
+
+        const getDiff  = (a:moment.Moment, b:moment.Moment) => {
+          let res:number ;
+            if (+(b.diff(a, 'years')) >= 1) {
+              res = b.diff(a, 'years')
+              return `${res} years ago`
+            } else if(+(b.diff(a, 'months')) >= 1){
+              res = b.diff(a, 'months')
+              return `${res} months ago`
+            } else if(+(b.diff(a, 'days')) >= 1){
+              res = b.diff(a, 'days')
+              return `${res} days ago`
+            } else if(+(b.diff(a, 'hours')) >= 1){
+              res = b.diff(a, 'hours')
+              return `${res} hours ago`
+            } else if(+(b.diff(a, 'minutes')) >= 1){
+              res = b.diff(a, 'minutes')
+              return `${res} minutes ago`
+            }
+            return 'now'
+        }
+        let diff = getDiff(date1, date2)
+        return <Component {...props} date={diff} /> 
+  }
+}
+
+
+
+const DateTimePretty = DateTimePrettyFoo(DateTime);
 
 
 function DateTime(props: {date:string}) {
@@ -55,7 +62,7 @@ function DateTime(props: {date:string}) {
 function Video(props: list) {
     return (
         <div className="video">
-            <iframe src={props.url} frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+            <iframe src={props.url} style={{border: '0'}} allow="autoplay; encrypted-media" allowFullScreen></iframe>
             <DateTimePretty date={props.date} />
         </div>
     )
@@ -65,7 +72,7 @@ function Video(props: list) {
 
 
 function VideoList(props:Props) {
-    return props.list.map(item => <Video url={item.url} date={item.date} />);
+    return props.list.map(item => <Video key={item.url} url={item.url} date={item.date} />);
 }
 
 
